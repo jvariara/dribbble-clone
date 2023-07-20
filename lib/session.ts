@@ -15,51 +15,51 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   jwt: {
-      encode: ({ secret, token }) => {
-        const encodedToken = jsonwebtoken.sign({
-            ...token,
-            iss: 'grafbase',
-            exp: Math.floor(Date.now() / 1000) + 60 * 60
-        }, secret)
-
-        return encodedToken
-      },
-      decode: async({ secret, token }) => {
-        const decodedToken = jsonwebtoken.verify(token!, secret) as JWT
-        
-        return decodedToken
-      }
+    encode: ({ secret, token }) => {
+      const encodedToken = jsonwebtoken.sign(
+        {
+          ...token,
+          iss: "grafbase",
+          exp: Math.floor(Date.now() / 1000) + 60 * 60,
+        },
+        secret
+      );
+      
+      return encodedToken;
+    },
+    decode: async ({ secret, token }) => {
+      const decodedToken = jsonwebtoken.verify(token!, secret);
+      return decodedToken as JWT;
+    },
   },
   theme: {
     colorScheme: "light",
-    logo: "/logo.png",
+    logo: "/logo.svg",
   },
   callbacks: {
     // gets triggered everytime a user visits the page
     async session({ session }) {
       // return a Google user =>  name, email, avatarUrl
       // merge with graphql user => projects, description, githubUrl
-      const email = session?.user?.email as string
+      const email = session?.user?.email as string;
 
       try {
         // user data from grafbase
-        const data = await getUser(email) as { user?: UserProfile}
-
+        const data = (await getUser(email)) as { user?: UserProfile };
         const newSession = {
-            ...session,
-            user: {
-                // combining the data of the user
-                ...session.user,
-                ...data?.user
-            }
-        }
-
-        return newSession
+          ...session,
+          user: {
+            // combining the data of the user
+            ...session.user,
+            ...data?.user,
+          },
+        };
+        // console.log(newSession)
+        return newSession;
       } catch (error) {
-        console.log('Error retrieving user data', error)
-        return session
+        console.log("Error retrieving user data: ", error);
+        return session;
       }
-
     },
     // used whenever the user signs in, get their info
     async signIn({ user }: { user: AdapterUser | User }) {
@@ -70,7 +70,7 @@ export const authOptions: NextAuthOptions = {
         };
 
         // if the dont, create them
-        if (!userExists) {
+        if (!userExists.user) {
           await createUser(
             user.name as string,
             user.email as string,
