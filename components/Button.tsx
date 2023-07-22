@@ -6,8 +6,8 @@ type Props = {
   leftIcon?: string | null;
   rightIcon?: string | null;
   handleClick?: MouseEventHandler;
-  isSubmitting: boolean;
-  type: "button" | "submit";
+  isSubmitting?: boolean;
+  type?: "button" | "submit";
   bgColor?: string;
   textColor?: string;
 };
